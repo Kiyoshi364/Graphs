@@ -49,15 +49,7 @@ int main() {
 	printf("max:%u\n", tmp*(tmp-1)*(tmp-2)/6);
 	*/
 	
-	
-
-
-
-	/*
-	addNode(g, (n = newNode()));
-	printf("n-> id=%u size=%u len=%u p=%p *p=%p\n", n->id, n->size, n->len, n->next, *n->next);
-	//printf("id=%d, ", getNode(g, 0)->id);
-	*/return 0;
+	return 0;
 }
 
 byte loadGraph(graph_t *g, char *filename) {
@@ -100,6 +92,7 @@ byte loadGraph(graph_t *g, char *filename) {
 			return 5;
 		}
 		linkNode(n1, n2);
+		// Comment next line if the file has directional links
 		linkNode(n2, n1);
 #if VERBOSE_LOADING == 1
 		printf("LOADING: nodelink: %u %u\n", first_id, second_id);
@@ -174,6 +167,7 @@ uint* getDistances(graph_t *g) {
 	return distancesList;
 }
 
+// May not work properly if the graph is has diretional links
 uint countTriangles(graph_t *g) {
 	uint count = 0;
 	for (ruint start = 0; start < g->size; start++) { //For each node
