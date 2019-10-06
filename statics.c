@@ -1,96 +1,61 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define ruint register uint;
-
 typedef unsigned char byte;
 typedef unsigned int uint;
 
-byte loadList(char *filename, uint *list, uint *len);
+uint* copy(uint *list, uint len);
+byte sort(uint *list, uint len);
 
-byte printList(uint *list, uint len);
-
-#define FILENAME "facebook.txt"
-
-int main() {
-	uint *list, len = 0;
-	//loadList("degree_" FILENAME, list, &len);
-	FILE *f = fopen("degree_" FILENAME, "r");
-	if (!f) {
+byte statics(uint *list, uint len, uint *max, uint *min, uint *mean, uint *median, double *variation) {
+	uint *newList = copy(list, len);
+	if (!newList) {
 		return 1;
 	}
+	sort(newList, len);
+	*max = *(newList + len-1);
+	*min = *newList;
+	*median = (*(newList + (len+1)/2) + *(newList + len/2) )/2;
 
-	uint tam = 10, *list2 = (uint *) malloc(sizeof(*list2)*tam), size = 0;
-	if (!list2) {
-		return 2;
+	register uint sum = 0;
+	for (register uint i = 0; i < len; i++) {
+		sum += *(newList + i);
 	}
+	sum /= len;
+	*mean = sum;
 
-	while (!feof(f)) {
-		uint sum;
-		fscanf(f, "%u\n", &sum);
-		if (size >= tam) {
-			tam += 5;
-			list2 = (uint *) realloc(list2, sizeof(*list2)*tam);
-	printf("size: %u tam: %u\n", size, tam);
-			if (!list2) {
-				printf("aaaaaaa\n");
-				return 3;
-			}
-		}
-		*(list + size) = sum;
-	printf("list: %u size: %u\n", *(list + size), size);
-		size += 1, sum = 0;
+	sum = 0;
+	for (register uint i = 0; i < len; i++) {
+		register int tmp = *(newList + i) - *mean;
+		sum += tmp * tmp;
 	}
-	fclose(f);
+	*variation = ((double) sum) / ((double) len);
 
-	list = list2;
-	len = size;
-
-	printf("Done!");
-	printList(list, len);
-	printf("Done2!");
+	free(newList);
 	return 0;
 }
 
-byte loadList(char *filename, uint *list, uint *len) {
-	FILE *f = fopen(filename, "r");
-	if (!f) {
-		return 1;
+uint* copy(uint *list, uint len) {
+	uint *copy = (uint *) malloc(sizeof(*copy)*len);
+	if (!copy) {
+		return (uint *) NULL;
 	}
-
-	uint tam = 10, *list2 = (uint *) malloc(sizeof(*list2)*tam), size = 0;
-	if (!list2) {
-		return 2;
+	for (register uint i = 0; i < len; i++) {
+		*(copy + i) = *(list + i);
 	}
-
-	while (!feof(f)) {
-		uint sum;
-		fscanf(f, "%u\n", &sum);
-		if (size >= tam) {
-	printf("size: %u tam: %u\n", size, tam);
-			tam += 5;
-			list2 = (uint *) realloc(list2, sizeof(*list2)*tam);
-			if (!list2) {
-				return 3;
-			}
-		}
-		*(list + size) = sum;
-	printf("list: %u size: %u\n", *(list + size), size);
-		size += 1, sum = 0;
-	}
-
-	list = list2;
-	*len = size;
-
-	return 0;
+	return copy;
 }
 
-byte printList(uint *list, uint len) {
-	if (!list) {
-		return 1;
-	}
-	for (register int i = 0; i < len; i++) {
-		printf("%u: %u\n", i, *(list + i));
+byte sort(uint *list, uint len) {
+	for (register uint i = 1; i < len; i++) {
+		for (register uint j = i; j > 0; j--) {
+			if (*(list + j) >= *(list + j-1)) {
+				break;
+			}
+			register uint tmp = *(list + j);
+			*(list + j) = *(list + j-1);
+			*(list + j-1) = tmp;
+		}
 	}
 	return 0;
 }

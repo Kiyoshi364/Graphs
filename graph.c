@@ -3,6 +3,8 @@
 
 #include "graphLib.c"
 #include "path.c"
+#include "statics.c"
+
 typedef unsigned char byte;
 #define ruint register uint
 
@@ -32,7 +34,6 @@ int main() {
 	//printList(degreeList, g->size);
 	write("degree_" FILENAME, degreeList, g->size);
 	free(degreeList);
-	
 
 
 	uint *distList;
@@ -40,7 +41,6 @@ int main() {
 	write("distances_" FILENAME, distList, g->size);
 	//printList(distList, g->size);
 	free(distList);
-	
 
 	/*uint triangleCount;
 	triangleCount = countTriangles(g);
@@ -224,6 +224,13 @@ byte write(char *filename, uint *list, uint len) {
 	FILE *f = fopen(filename, "w");
 	if (!f) {
 		return 1;
+	}
+	uint max, min, mean, median;
+       	double variation;
+	if (statics(list, len, &max, &min, &mean, &median, &variation)) {
+		printf("ERROR %s", filename);
+	} else {
+	fprintf(f, "max=%u, min=%u, mean=%u, median=%u, variation=%lf\n", max, min, mean, median, variation);
 	}
 	for (ruint i = 0; i < len; i++) {
 		fprintf(f, "%u\n", *(list + i));
