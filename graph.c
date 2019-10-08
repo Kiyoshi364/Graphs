@@ -29,7 +29,7 @@ int main() {
 
 	loadGraph(g, filename);
 #if MAIN_VERBOSE == 1
-	printf("Graph Loading: Done!\n\n");
+	printf("Graph Loading: Done!\n%u Nodes Created\n\n", g->size);
 #endif // MAIN_VERBOSE == 1
 
 	//printGraph(g);
