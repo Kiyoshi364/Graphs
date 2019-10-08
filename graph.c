@@ -22,7 +22,7 @@ void printList(uint *list, uint len);
 
 byte write(char *filename, uint *list, uint len);
 
-#define FILENAME "actor.edgelist.txt"
+#define FILENAME "facebook.txt"
 int main() {
 	graph_t *g = newGraph();
 	char *filename = FILENAME;
