@@ -64,7 +64,6 @@ graph_t* newGraph() {
 	if (!g->nodes) {
 		return (graph_t *) NULL;
 	}
-	printf("newGraph: size=%u len=%u p=%p *p=%p\n", g->size, g->len, g->nodes, *g->nodes);
 	return g;
 }
 
