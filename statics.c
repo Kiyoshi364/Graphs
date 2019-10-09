@@ -29,12 +29,12 @@ byte statics(uint *list, uint len, uint *max, uint *min, double *mean, uint *med
 	*mean = ((double) sum) / ((double) len);
 	printf("Mean: Done!\n");
 
-	sum = 0;
+	double ssum = 0;
 	for (register uint i = 0; i < len; i++) {
-		register int tmp = *(newList + i) - *mean;
-		sum += tmp * tmp;
+		register double tmp = *(newList + i) - *mean;
+		ssum += tmp * tmp;
 	}
-	*variation = ((double) sum) / ((double) len);
+	*variation = (ssum) / ((double) len);
 	printf("Variation: Done!\n");
 
 	free(newList);
