@@ -194,6 +194,7 @@ uint* getDistances(graph_t *g, graph_t ***clusters, uint *clusterLen) {
 
 		enq(path, getNode(g, start));
 		visitedList[start] = 1;
+		node_count += 1;
 
 		uint steps = 0, maxSteps = 0xFFFFFFFF;
 		while(path->end || next_path->end) {
@@ -205,9 +206,6 @@ uint* getDistances(graph_t *g, graph_t ***clusters, uint *clusterLen) {
 				register qpath_t *tmp = path;
 				path = next_path;
 				next_path = tmp;
-				/*while(next_path->end) {
-					enq(path, deq(next_path));
-				}*/
 				steps += 1;
 			}
 			node_t *n = deq(path);
@@ -219,38 +217,40 @@ uint* getDistances(graph_t *g, graph_t ***clusters, uint *clusterLen) {
 				node_t *side = *(n->next + i);
 				if (!visitedList[side->id]) {
 					visitedList[side->id] = 1;
+					enq(next_path, side);
+					node_count += 1;
 					if (side->id < start) {
 						ruint distance = *(distancesList + side->id) + steps;
 						if (maxSteps < distance) {
 							maxSteps = distance;
 						}
 					}
-					enq(next_path, side);
-					node_count += 1;
 				}
 			}
 		}
-		if (!start && node_count != g->size) {
-			printf("IT IS NOT A COMPLETE GRAPH\n");
+		if (!start) {
+			if (node_count != g->size) {
+				printf("IT IS NOT A COMPLETE GRAPH\n");
 #if VERBOSE_CLUSTERS == 1
-			printf("New Cluster:\n");
+				printf("New Cluster:\n");
 #endif // VERBOSE_CLUSTERS == 1
-			*clusters = (graph_t **) malloc(sizeof(**clusters));
-			**clusters = newGraph();
-			for (ruint i = 0; i < g->size; i++) {
-				if (visitedList[i]) {
-					ToDoList[i] = 1;
-					addNode(**clusters, *(g->nodes + i));
+				*clusters = (graph_t **) malloc(sizeof(**clusters));
+				**clusters = newGraph();
+				for (ruint i = 0; i < g->size; i++) {
+					if (visitedList[i]) {
+						ToDoList[i] = 1;
+						addNode(**clusters, *(g->nodes + i));
 #if VERBOSE_CLUSTERS == 1
-					printf("%u ", i);
+						printf("%u ", i);
 #endif // VERBOSE_CLUSTERS == 1
+					}
 				}
-			}
-			*clusterLen = 1;
+				*clusterLen = 1;
 #if VERBOSE_CLUSTERS == 1
-			printf("\n\n");
+				printf("\n\n");
 #endif // VERBOSE_CLUSTERS == 1
-		} else if (!ToDoList[start]) {
+			}
+		} else if (ToDoList[0] && !ToDoList[start]) {
 #if VERBOSE_CLUSTERS == 1
 			printf("New Cluster:\n");
 #endif // VERBOSE_CLUSTERS == 1
